@@ -1,9 +1,14 @@
-﻿using Locatudo.Compartilhado.Executores.Comandos;
+﻿using Flunt.Notifications;
+using Locatudo.Compartilhado.Executores.Comandos;
 
 namespace Locatudo.Dominio.Executores.Comandos
 {
-    public class ComandoCadastrarLocacao : IComandoExecutor
+    public class ComandoCadastrarLocacao : Notifiable<Notification>, IComandoExecutor
     {
+        public Guid IdEquipamento { get; set; }
+        public Guid IdLocatario { get; set; }
+        public DateTime Inicio { get; set; }
+
         public ComandoCadastrarLocacao()
         {
         }
@@ -15,8 +20,9 @@ namespace Locatudo.Dominio.Executores.Comandos
             Inicio = inicio;
         }
 
-        public Guid IdEquipamento { get; set; }
-        public Guid IdLocatario { get; set; }
-        public DateTime Inicio { get; set; }
+        public bool Validar()
+        {
+            return IsValid;
+        }
     }
 }

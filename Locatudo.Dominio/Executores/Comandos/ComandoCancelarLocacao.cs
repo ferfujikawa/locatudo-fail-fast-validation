@@ -1,9 +1,12 @@
-﻿using Locatudo.Compartilhado.Executores.Comandos;
+﻿using Flunt.Notifications;
+using Locatudo.Compartilhado.Executores.Comandos;
 
 namespace Locatudo.Dominio.Executores.Comandos
 {
-    public class ComandoCancelarLocacao : IComandoExecutor
+    public class ComandoCancelarLocacao : Notifiable<Notification>, IComandoExecutor
     {
+        public Guid IdLocacao { get; set; }
+
         public ComandoCancelarLocacao()
         {
         }
@@ -13,6 +16,9 @@ namespace Locatudo.Dominio.Executores.Comandos
             IdLocacao = idLocacao;
         }
 
-        public Guid IdLocacao { get; set; }
+        public bool Validar()
+        {
+            return IsValid;
+        }
     }
 }

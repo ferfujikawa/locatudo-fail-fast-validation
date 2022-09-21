@@ -1,9 +1,12 @@
-﻿using Locatudo.Compartilhado.Executores.Comandos;
+﻿using Flunt.Notifications;
+using Locatudo.Compartilhado.Executores.Comandos;
 
 namespace Locatudo.Dominio.Executores.Comandos
 {
-    public class ComandoCadastrarEquipamento : IComandoExecutor
+    public class ComandoCadastrarEquipamento : Notifiable<Notification>, IComandoExecutor
     {
+        public string Nome { get; set; }
+
         public ComandoCadastrarEquipamento()
         {
         }
@@ -13,6 +16,9 @@ namespace Locatudo.Dominio.Executores.Comandos
             Nome = nome;
         }
 
-        public string Nome { get; set; }
+        public bool Validar()
+        {
+            return IsValid;
+        }
     }
 }

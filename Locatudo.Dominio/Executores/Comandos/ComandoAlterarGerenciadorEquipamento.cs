@@ -1,9 +1,13 @@
-﻿using Locatudo.Compartilhado.Executores.Comandos;
+﻿using Flunt.Notifications;
+using Locatudo.Compartilhado.Executores.Comandos;
 
 namespace Locatudo.Dominio.Executores.Comandos
 {
-    public class ComandoAlterarGerenciadorEquipamento : IComandoExecutor
+    public class ComandoAlterarGerenciadorEquipamento : Notifiable<Notification>, IComandoExecutor
     {
+        public Guid Id { get; set; }
+        public Guid IdDepartamento { get; set; }
+
         public ComandoAlterarGerenciadorEquipamento()
         {
         }
@@ -14,7 +18,9 @@ namespace Locatudo.Dominio.Executores.Comandos
             IdDepartamento = idDepartamento;
         }
 
-        public Guid Id { get; set; }
-        public Guid IdDepartamento { get; set; }
+        public bool Validar()
+        {
+            return IsValid;
+        }
     }
 }
