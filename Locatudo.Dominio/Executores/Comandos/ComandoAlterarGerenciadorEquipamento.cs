@@ -1,5 +1,6 @@
 ﻿using Flunt.Notifications;
 using Locatudo.Compartilhado.Executores.Comandos;
+using Locatudo.Dominio.Executores.Comandos.Contratos;
 
 namespace Locatudo.Dominio.Executores.Comandos
 {
@@ -20,6 +21,8 @@ namespace Locatudo.Dominio.Executores.Comandos
 
         public bool Validar()
         {
+            AddNotifications(new ContratoComandoAlterarGerenciadorEquipamento(this));
+
             return IsValid;
         }
     }
