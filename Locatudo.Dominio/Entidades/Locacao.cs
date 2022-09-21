@@ -3,7 +3,7 @@ using Locatudo.Compartilhado.ObjetosDeValor;
 
 namespace Locatudo.Dominio.Entidades
 {
-    public class Locacao : EntidadeAbstrata
+    public class Locacao : EntidadeBase
     {
         public Locacao(Equipamento equipamento, Usuario locatario, HorarioLocacao horario)
         {

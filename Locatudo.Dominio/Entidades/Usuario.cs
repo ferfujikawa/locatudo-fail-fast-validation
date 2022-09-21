@@ -3,7 +3,7 @@ using Locatudo.Compartilhado.ObjetosDeValor;
 
 namespace Locatudo.Dominio.Entidades
 {
-    public abstract class Usuario : EntidadeAbstrata
+    public abstract class Usuario : EntidadeBase
     {
         public Usuario(NomePessoaFisica nome, Email email) : base()
         {

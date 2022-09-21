@@ -2,7 +2,7 @@
 
 namespace Locatudo.Dominio.Entidades
 {
-    public class Equipamento : EntidadeAbstrata
+    public class Equipamento : EntidadeBase
     {
         public Equipamento(string nome) : base()
         {

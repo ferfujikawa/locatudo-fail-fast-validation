@@ -2,7 +2,7 @@
 
 namespace Locatudo.Compartilhado.Repositorios
 {
-    public interface IRepositorio<T> where T : EntidadeAbstrata
+    public interface IRepositorio<T> where T : EntidadeBase
     {
         void Criar(T entidade);
         IEnumerable<T> Listar();

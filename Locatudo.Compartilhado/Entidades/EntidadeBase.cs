@@ -1,8 +1,8 @@
 ﻿namespace Locatudo.Compartilhado.Entidades
 {
-    public abstract class EntidadeAbstrata
+    public abstract class EntidadeBase
     {
-        protected EntidadeAbstrata()
+        protected EntidadeBase()
         {
             Id = Guid.NewGuid();
         }

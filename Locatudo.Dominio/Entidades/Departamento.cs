@@ -3,7 +3,7 @@ using Locatudo.Compartilhado.ObjetosDeValor;
 
 namespace Locatudo.Dominio.Entidades
 {
-    public class Departamento : EntidadeAbstrata
+    public class Departamento : EntidadeBase
     {
         public Departamento(string nome, Email email) : base()
         {
