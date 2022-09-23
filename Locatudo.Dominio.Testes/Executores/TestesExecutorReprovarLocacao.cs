@@ -5,7 +5,7 @@ using Locatudo.Compartilhado.Enumeradores;
 using Locatudo.Compartilhado.ObjetosDeValor;
 using Locatudo.Dominio.Entidades;
 using Locatudo.Dominio.Executores;
-using Locatudo.Dominio.Executores.Comandos;
+using Locatudo.Dominio.Executores.Comandos.Entradas;
 using Locatudo.Dominio.Repositorios;
 using Locatudo.Dominio.Testes.Customizacoes;
 using Moq;
@@ -54,7 +54,7 @@ namespace Locatudo.Dominio.Testes.Executores
             locacao.Aprovador
                 .Should().NotBeNull("Ao reprovar a locação, precisa registrar quem é o aprovador")
                 .And.BeOfType<Funcionario>("Somente um funcionário pode reprovar uma locação")
-                .Which.Id.Should().Be(comando.IdAprovador, "O reprovador da locação precisa ser o mesmo cujo Id foi passado no comando");
+                .Which.Id.Should().Be(comando.IdAprovador, "O reprovador da locação precisa ser o mesmo cujo IdEquipamento foi passado no comando");
         }
 
         [Theory, AutoMoq]

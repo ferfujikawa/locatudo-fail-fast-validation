@@ -1,8 +1,8 @@
 ﻿using Flunt.Notifications;
-using Locatudo.Compartilhado.Executores.Comandos;
+using Locatudo.Compartilhado.Executores.Comandos.Entradas;
 using Locatudo.Dominio.Executores.Comandos.Contratos;
 
-namespace Locatudo.Dominio.Executores.Comandos
+namespace Locatudo.Dominio.Executores.Comandos.Entradas
 {
     public class ComandoCancelarLocacao : Notifiable<Notification>, IComandoExecutor
     {

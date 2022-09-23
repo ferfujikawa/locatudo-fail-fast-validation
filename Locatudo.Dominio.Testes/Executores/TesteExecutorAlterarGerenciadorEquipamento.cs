@@ -3,7 +3,7 @@ using AutoFixture.Xunit2;
 using FluentAssertions;
 using Locatudo.Dominio.Entidades;
 using Locatudo.Dominio.Executores;
-using Locatudo.Dominio.Executores.Comandos;
+using Locatudo.Dominio.Executores.Comandos.Entradas;
 using Locatudo.Dominio.Repositorios;
 using Locatudo.Dominio.Testes.Customizacoes;
 using Moq;
@@ -37,7 +37,7 @@ namespace Locatudo.Dominio.Testes.Executores
             //Assert
             acao.Should().NotThrow();
             equipamento.Gerenciador
-                .Should().Match<Departamento>(x => x.Id == departamento.Id, "O departamento gerenciador do equipamento precisa ser o mesmo cujo Id foi passado no comando");
+                .Should().Match<Departamento>(x => x.Id == departamento.Id, "O departamento gerenciador do equipamento precisa ser o mesmo cujo IdEquipamento foi passado no comando");
         }
 
         [Theory, AutoMoq]

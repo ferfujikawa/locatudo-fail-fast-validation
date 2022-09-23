@@ -1,4 +1,5 @@
 ﻿using Flunt.Validations;
+using Locatudo.Dominio.Executores.Comandos.Entradas;
 
 namespace Locatudo.Dominio.Executores.Comandos.Contratos
 {

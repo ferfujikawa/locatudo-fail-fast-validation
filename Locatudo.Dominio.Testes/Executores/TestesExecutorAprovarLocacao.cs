@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using Locatudo.Dominio.Entidades;
 using Locatudo.Dominio.Executores;
-using Locatudo.Dominio.Executores.Comandos;
 using Locatudo.Dominio.Repositorios;
 using Moq;
 using Locatudo.Dominio.Testes.Customizacoes;
@@ -9,6 +8,7 @@ using FluentAssertions;
 using AutoFixture.Xunit2;
 using Locatudo.Compartilhado.ObjetosDeValor;
 using Locatudo.Compartilhado.Enumeradores;
+using Locatudo.Dominio.Executores.Comandos.Entradas;
 
 namespace Locatudo.Dominio.Testes.Executores
 {
@@ -54,7 +54,7 @@ namespace Locatudo.Dominio.Testes.Executores
             locacao.Aprovador
                 .Should().NotBeNull("Ao aprovar a locação, precisa registrar quem é o aprovador")
                 .And.BeOfType<Funcionario>("Somente um funcionário pode aprovar uma locação")
-                .Which.Id.Should().Be(comando.IdAprovador, "O aprovador da locação precisa ser o mesmo cujo Id foi passado no comando");
+                .Which.Id.Should().Be(comando.IdAprovador, "O aprovador da locação precisa ser o mesmo cujo IdEquipamento foi passado no comando");
         }
 
         [Theory, AutoMoq]

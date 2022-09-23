@@ -1,10 +1,12 @@
 ﻿using Locatudo.Compartilhado.Executores;
-using Locatudo.Dominio.Executores.Comandos;
+using Locatudo.Compartilhado.Executores.Comandos.Saidas;
+using Locatudo.Dominio.Executores.Comandos.Entradas;
+using Locatudo.Dominio.Executores.Comandos.Saidas;
 using Locatudo.Dominio.Repositorios;
 
 namespace Locatudo.Dominio.Executores
 {
-    public class ExecutorCancelarLocacao : IExecutor<ComandoCancelarLocacao>
+    public class ExecutorCancelarLocacao : IExecutor<ComandoCancelarLocacao, DadoRespostaComandoCancelarLocacao>
     {
         private readonly IRepositorioLocacao _repositorioLocacao;
 
@@ -13,14 +15,23 @@ namespace Locatudo.Dominio.Executores
             _repositorioLocacao = repositorioLocacao;
         }
 
-        public void Executar(ComandoCancelarLocacao comando)
+        public IRespostaComandoExecutor<DadoRespostaComandoCancelarLocacao> Executar(ComandoCancelarLocacao comando)
         {
+            if (!comando.Validar())
+                return new RespostaGenericaComandoExecutor<DadoRespostaComandoCancelarLocacao>(false, null, comando.Notifications);
+
             var locacao = _repositorioLocacao.ObterPorId(comando.IdLocacao);
             if (locacao == null)
-                throw new Exception("Locação não encontrada.");
+                return new RespostaGenericaComandoExecutor<DadoRespostaComandoCancelarLocacao>(false, null, "IdLocacao", "Locação não encontrada.");
 
-            if (locacao.Cancelar() == false)
-                throw new Exception("A situação atual da locação não permite cancelamento.");
+            if (!locacao.Cancelar())
+                return new RespostaGenericaComandoExecutor<DadoRespostaComandoCancelarLocacao>(false, null, "Situacao", "A situação atual da locação não permite cancelamento.");
+
+            return new RespostaGenericaComandoExecutor<DadoRespostaComandoCancelarLocacao>(
+                true,
+                new DadoRespostaComandoCancelarLocacao(locacao.Id, locacao.Situacao.Valor.ToString()),
+                "Sucesso",
+                "Locação cancelada.");
         }
     }
 }

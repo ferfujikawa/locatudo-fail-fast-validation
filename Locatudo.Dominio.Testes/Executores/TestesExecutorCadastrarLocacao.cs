@@ -4,7 +4,7 @@ using FluentAssertions;
 using Locatudo.Compartilhado.ObjetosDeValor;
 using Locatudo.Dominio.Entidades;
 using Locatudo.Dominio.Executores;
-using Locatudo.Dominio.Executores.Comandos;
+using Locatudo.Dominio.Executores.Comandos.Entradas;
 using Locatudo.Dominio.Repositorios;
 using Locatudo.Dominio.Testes.Customizacoes;
 using Moq;

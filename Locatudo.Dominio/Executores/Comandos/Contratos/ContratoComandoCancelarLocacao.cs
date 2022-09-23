@@ -1,4 +1,5 @@
 ﻿using Flunt.Validations;
+using Locatudo.Dominio.Executores.Comandos.Entradas;
 
 namespace Locatudo.Dominio.Executores.Comandos.Contratos
 {
@@ -7,7 +8,7 @@ namespace Locatudo.Dominio.Executores.Comandos.Contratos
         public ContratoComandoCancelarLocacao(ComandoCancelarLocacao comando)
         {
             Requires()
-                .IsNotNull(comando.IdLocacao, "IdLocacao", "É necessário informar o Id da locação que se pretende cancelar");
+                .IsNotNull(comando.IdLocacao, "IdLocacao", "É necessário informar o IdEquipamento da locação que se pretende cancelar");
         }
     }
 }

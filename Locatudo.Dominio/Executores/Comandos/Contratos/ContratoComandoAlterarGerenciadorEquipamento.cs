@@ -1,4 +1,5 @@
 ﻿using Flunt.Validations;
+using Locatudo.Dominio.Executores.Comandos.Entradas;
 
 namespace Locatudo.Dominio.Executores.Comandos.Contratos
 {
@@ -7,8 +8,8 @@ namespace Locatudo.Dominio.Executores.Comandos.Contratos
         public ContratoComandoAlterarGerenciadorEquipamento(ComandoAlterarGerenciadorEquipamento comando)
         {
             Requires()
-                .IsNotNull(comando.Id, "Id", "É necessário informar o Id do equipamento para alterar seu gerenciador")
-                .IsNotNull(comando.IdDepartamento, "IdDepartamento", "É necessário informar o Id do novo gerenciador do equipamento");
+                .IsNotNull(comando.Id, "IdEquipamento", "É necessário informar o IdEquipamento do equipamento para alterar seu gerenciador")
+                .IsNotNull(comando.IdDepartamento, "IdDepartamento", "É necessário informar o IdEquipamento do novo gerenciador do equipamento");
         }
     }
 }
