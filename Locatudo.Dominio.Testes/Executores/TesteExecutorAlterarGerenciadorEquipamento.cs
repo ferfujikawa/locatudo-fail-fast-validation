@@ -4,6 +4,7 @@ using FluentAssertions;
 using Locatudo.Dominio.Entidades;
 using Locatudo.Dominio.Executores;
 using Locatudo.Dominio.Executores.Comandos.Entradas;
+using Locatudo.Dominio.Executores.Comandos.Saidas;
 using Locatudo.Dominio.Repositorios;
 using Locatudo.Dominio.Testes.Customizacoes;
 using Moq;
@@ -32,16 +33,18 @@ namespace Locatudo.Dominio.Testes.Executores
             var comando = new ComandoAlterarGerenciadorEquipamento(equipamento.Id, departamento.Id);
 
             //Act
-            var acao = () => executor.Executar(comando);
+            var resultado = executor.Executar(comando);
 
             //Assert
-            acao.Should().NotThrow();
-            equipamento.Gerenciador
-                .Should().Match<Departamento>(x => x.Id == departamento.Id, "O departamento gerenciador do equipamento precisa ser o mesmo cujo IdEquipamento foi passado no comando");
+            resultado.Successo.Should().BeTrue("Resultados com sucesso devem ter o valor da propriedade Sucesso igual a verdadeiro");
+            resultado.Dado
+                .Should().NotBeNull("Resultados com sucesso devem ter valor não nulo na propridade Dado")
+                .And.BeOfType<DadoRespostaComandoAlterarGerenciadorEquipamento>("Resultados com sucesso devem ter a propriedade Dado de um tipo específico")
+                .Which.IdDepartamento.Should().Be(departamento.Id, "O departamento gerenciador do equipamento precisa ser o mesmo cujo IdEquipamento foi passado no comando");
         }
 
         [Theory, AutoMoq]
-        public void Equipamento_Invalido_GerarExcecao(
+        public void Equipamento_Invalido_GerarNotificacao(
             IFixture fixture,
             [Frozen] Mock<IRepositorioEquipamento> repositorioEquipamento,
             [Frozen] Mock<IRepositorioDepartamento> repositorioDepartamento)
@@ -59,14 +62,17 @@ namespace Locatudo.Dominio.Testes.Executores
             var comando = new ComandoAlterarGerenciadorEquipamento(Guid.NewGuid(), departamento.Id);
 
             //Act
-            var acao = () => executor.Executar(comando);
+            var resultado = executor.Executar(comando);
 
             //Assert
-            acao.Should().Throw<Exception>("A alteração de gerenciador de um equipamento inexistente não pode ser realizada");
+            resultado.Successo.Should().BeFalse("Resultados com falha devem ter o valor da propriedade Sucesso igual a falso");
+            resultado.Dado.Should().BeNull("Resultados com falha devem ter valor nulo na propridade Dado");
+            resultado.Mensagens.Should().NotBeEmpty("Resultados com falha devem ter alguma mensagem de notificação")
+                .And.Contain("Equipamento não encontrado", "Quando informado o Id de um equipamento inexistente, o resultado deve conter uma notificação específica");
         }
 
         [Theory, AutoMoq]
-        public void Departamento_Invalido_GerarExcecao(
+        public void Departamento_Invalido_GerarNotificacao(
             IFixture fixture,
             [Frozen] Mock<IRepositorioEquipamento> repositorioEquipamento,
             [Frozen] Mock<IRepositorioDepartamento> repositorioDepartamento)
@@ -84,10 +90,13 @@ namespace Locatudo.Dominio.Testes.Executores
             var comando = new ComandoAlterarGerenciadorEquipamento(equipamento.Id, Guid.NewGuid());
 
             //Act
-            var acao = () => executor.Executar(comando);
+            var resultado = executor.Executar(comando);
 
             //Assert
-            acao.Should().Throw<Exception>("A alteração de gerenciador de um equipamento não pode ser realizada para um departamento inexistente");
+            resultado.Successo.Should().BeFalse("Resultados com falha devem ter o valor da propriedade Sucesso igual a falso");
+            resultado.Dado.Should().BeNull("Resultados com falha devem ter valor nulo na propridade Dado");
+            resultado.Mensagens.Should().NotBeEmpty("Resultados com falha devem ter alguma mensagem de notificação")
+                .And.Contain("Departamento não encontrado", "Quando informado o Id de um departamento inexistente, o resultado deve conter uma notificação específica");
         }
     }
 }
