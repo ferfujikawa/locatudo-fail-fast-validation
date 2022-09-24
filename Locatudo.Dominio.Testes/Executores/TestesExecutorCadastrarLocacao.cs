@@ -1,10 +1,12 @@
 ﻿using AutoFixture;
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using Locatudo.Compartilhado.Enumeradores;
 using Locatudo.Compartilhado.ObjetosDeValor;
 using Locatudo.Dominio.Entidades;
 using Locatudo.Dominio.Executores;
 using Locatudo.Dominio.Executores.Comandos.Entradas;
+using Locatudo.Dominio.Executores.Comandos.Saidas;
 using Locatudo.Dominio.Repositorios;
 using Locatudo.Dominio.Testes.Customizacoes;
 using Moq;
@@ -13,9 +15,6 @@ namespace Locatudo.Dominio.Testes.Executores
 {
     public class TestesExecutorCadastrarLocacao
     {
-        private readonly ComandoCadastrarLocacao _comandoValido = new (Guid.NewGuid(), Guid.NewGuid(), DateTime.Now.AddHours(1));
-        private readonly ComandoCadastrarLocacao _comandoInicioPassado = new (Guid.NewGuid(), Guid.NewGuid(), DateTime.Now.AddHours(-1));
-
         [Theory, AutoMoq]
         public void Comando_Valido_CadastrarLocacao(
             IFixture fixture,
@@ -33,18 +32,24 @@ namespace Locatudo.Dominio.Testes.Executores
             repositorioUsuario.Setup(x => x.ObterPorId(It.IsAny<Guid>())).Returns(terceirizado);
             repositorioLocacao.Setup(x => x.VerificarDisponibilidade(It.IsAny<Guid>(), It.IsAny<HorarioLocacao>())).Returns(true);
 
-            //Criação do mock do executor
+            //Criação do mock do executor e comando
             var executor = fixture.Create<ExecutorCadastrarLocacao>();
+            var comando = new ComandoCadastrarLocacao(equipamento.Id, terceirizado.Id, DateTime.Now.AddHours(1));
 
             //Act
-            var acao = () => executor.Executar(_comandoValido);
+            var resultado = executor.Executar(comando);
 
             //Assert
-            acao.Should().NotThrow();
+            resultado.Successo.Should().BeTrue("Resultados com sucesso devem ter o valor da propriedade Sucesso igual a verdadeiro");
+
+            resultado.Dado
+                .Should().NotBeNull("Resultados com sucesso devem ter valor não nulo na propridade Dado")
+                .And.BeOfType<DadoRespostaComandoCadastrarLocacao>("Resultados com sucesso devem ter a propriedade Dado de um tipo específico")
+                .Which.Situacao.Should().Be(ESituacaoLocacao.Solicitado.ToString(), "A situação de uma nova locação deve ser Solicitado");
         }
 
         [Theory, AutoMoq]
-        public void Comando_EquipamentoInvalido_GerarExcecao(
+        public void Comando_EquipamentoInvalido_GerarNotificacao(
             IFixture fixture,
             [Frozen] Mock<IRepositorioEquipamento> repositorioEquipamento,
             [Frozen] Mock<IRepositorioUsuario> repositorioUsuario,
@@ -59,18 +64,22 @@ namespace Locatudo.Dominio.Testes.Executores
             repositorioUsuario.Setup(x => x.ObterPorId(It.IsAny<Guid>())).Returns(terceirizado);
             repositorioLocacao.Setup(x => x.VerificarDisponibilidade(It.IsAny<Guid>(), It.IsAny<HorarioLocacao>())).Returns(true);
 
-            //Criação do mock do executor
+            //Criação do mock do executor e comando
             var executor = fixture.Create<ExecutorCadastrarLocacao>();
+            var comando = new ComandoCadastrarLocacao(Guid.NewGuid(), terceirizado.Id, DateTime.Now.AddHours(1));
 
             //Act
-            var acao = () => executor.Executar(_comandoValido);
+            var resultado = executor.Executar(comando);
 
             //Assert
-            acao.Should().Throw<Exception>("A locação de um equipamento inexistente não pode ser realizada");
+            resultado.Successo.Should().BeFalse("Resultados com falha devem ter o valor da propriedade Sucesso igual a falso");
+            resultado.Dado.Should().BeNull("Resultados com falha devem ter valor nulo na propridade Dado");
+            resultado.Mensagens.Should().NotBeEmpty("Resultados com falha devem ter alguma mensagem de notificação")
+                .And.Contain("Equipamento não encontrado", "Quando informado o Id de um equipamento inexistente, o resultado deve conter uma notificação específica");
         }
 
         [Theory, AutoMoq]
-        public void Comando_LocadorInvalido_GerarExcecao(
+        public void Comando_LocadorInvalido_GerarNotificacao(
             IFixture fixture,
             [Frozen] Mock<IRepositorioEquipamento> repositorioEquipamento,
             [Frozen] Mock<IRepositorioUsuario> repositorioUsuario,
@@ -85,45 +94,22 @@ namespace Locatudo.Dominio.Testes.Executores
             repositorioUsuario.Setup(x => x.ObterPorId(It.IsAny<Guid>())).Returns((Terceirizado?) null);
             repositorioLocacao.Setup(x => x.VerificarDisponibilidade(It.IsAny<Guid>(), It.IsAny<HorarioLocacao>())).Returns(true);
 
-            //Criação do mock do executor
+            //Criação do mock do executor e comando
             var executor = fixture.Create<ExecutorCadastrarLocacao>();
+            var comando = new ComandoCadastrarLocacao(equipamento.Id, Guid.NewGuid(), DateTime.Now.AddHours(1));
 
             //Act
-            var acao = () => executor.Executar(_comandoValido);
+            var resultado = executor.Executar(comando);
 
             //Assert
-            acao.Should().Throw<Exception>("A locação de um equipamento não pode ser realizada para um usuário inexistente");
+            resultado.Successo.Should().BeFalse("Resultados com falha devem ter o valor da propriedade Sucesso igual a falso");
+            resultado.Dado.Should().BeNull("Resultados com falha devem ter valor nulo na propridade Dado");
+            resultado.Mensagens.Should().NotBeEmpty("Resultados com falha devem ter alguma mensagem de notificação")
+                .And.Contain("Usuário não encontrado", "Quando informado o Id de um usuário inexistente, o resultado deve conter uma notificação específica");
         }
 
         [Theory, AutoMoq]
-        public void Comando_InicioPassado_GerarExcecao(
-            IFixture fixture,
-            [Frozen] Mock<IRepositorioEquipamento> repositorioEquipamento,
-            [Frozen] Mock<IRepositorioUsuario> repositorioUsuario,
-            [Frozen] Mock<IRepositorioLocacao> repositorioLocacao)
-        {
-            //Arrange
-            //Criação de mocks
-            var equipamento = fixture.Create<Equipamento>();
-            var terceirizado = fixture.Create<Terceirizado>();
-
-            //Setup de retornos de métodos dos repositórios
-            repositorioEquipamento.Setup(x => x.ObterPorId(It.IsAny<Guid>())).Returns(equipamento);
-            repositorioUsuario.Setup(x => x.ObterPorId(It.IsAny<Guid>())).Returns(terceirizado);
-            repositorioLocacao.Setup(x => x.VerificarDisponibilidade(It.IsAny<Guid>(), It.IsAny<HorarioLocacao>())).Returns(true);
-
-            //Criação do mock do executor
-            var executor = fixture.Create<ExecutorCadastrarLocacao>();
-
-            //Act
-            var acao = () => executor.Executar(_comandoInicioPassado);
-
-            //Assert
-            acao.Should().Throw<Exception>("A locação de um equipamento não pode ser realizada para um horário no passado");
-        }
-
-        [Theory, AutoMoq]
-        public void Comando_DataIndisponivel_GerarExcecao(
+        public void Comando_DataIndisponivel_GerarNotificacao(
             IFixture fixture,
             [Frozen] Mock<IRepositorioEquipamento> repositorioEquipamento,
             [Frozen] Mock<IRepositorioUsuario> repositorioUsuario,
@@ -139,14 +125,18 @@ namespace Locatudo.Dominio.Testes.Executores
             repositorioUsuario.Setup(x => x.ObterPorId(It.IsAny<Guid>())).Returns(terceirizado);
             repositorioLocacao.Setup(x => x.VerificarDisponibilidade(It.IsAny<Guid>(), It.IsAny<HorarioLocacao>())).Returns(false);
 
-            //Criação do mock do executor
+            //Criação do mock do executor e comando
             var executor = fixture.Create<ExecutorCadastrarLocacao>();
+            var comando = new ComandoCadastrarLocacao(equipamento.Id, Guid.NewGuid(), DateTime.Now.AddHours(1));
 
             //Act
-            var acao = () => executor.Executar(_comandoValido);
+            var resultado = executor.Executar(comando);
 
             //Assert
-            acao.Should().Throw<Exception>("A locação de um equipamento não pode ser realizada para um horário indisponível");
+            resultado.Successo.Should().BeFalse("Resultados com falha devem ter o valor da propriedade Sucesso igual a falso");
+            resultado.Dado.Should().BeNull("Resultados com falha devem ter valor nulo na propridade Dado");
+            resultado.Mensagens.Should().NotBeEmpty("Resultados com falha devem ter alguma mensagem de notificação")
+                .And.Contain("Horário de locação indisponível", "Quando informado um horário indisponível, o resultado deve conter uma notificação específica");
         }
     }
 }
