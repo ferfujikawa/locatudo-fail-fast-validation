@@ -18,7 +18,7 @@ namespace Locatudo.Dominio.Executores
 
         public IRespostaComandoExecutor<DadoRespostaComandoCadastrarEquipamento> Executar(ComandoCadastrarEquipamento comando)
         {
-            if (!comando.IsValid)
+            if (!comando.Validar())
                 return new RespostaGenericaComandoExecutor<DadoRespostaComandoCadastrarEquipamento>(false, null, comando.Notifications);
 
             var equipamento = new Equipamento(comando.Nome);
