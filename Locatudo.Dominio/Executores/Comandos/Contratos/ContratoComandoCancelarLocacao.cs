@@ -8,7 +8,7 @@ namespace Locatudo.Dominio.Executores.Comandos.Contratos
         public ContratoComandoCancelarLocacao(ComandoCancelarLocacao comando)
         {
             Requires()
-                .IsNotNull(comando.IdLocacao, "IdLocacao", "É necessário informar o IdEquipamento da locação que se pretende cancelar");
+                .AreNotEquals(comando.IdLocacao, default(Guid), "IdLocacao", "É necessário informar o IdEquipamento da locação que se pretende cancelar");
         }
     }
 }

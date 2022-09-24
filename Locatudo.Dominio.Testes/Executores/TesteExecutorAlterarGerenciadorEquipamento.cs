@@ -44,6 +44,23 @@ namespace Locatudo.Dominio.Testes.Executores
         }
 
         [Theory, AutoMoq]
+        public void Comando_Invalido_GerarNotificacao(IFixture fixture)
+        {
+            ////Arrange
+            //Mock de executor e instância de comando
+            var executor = fixture.Create<ExecutorAlterarGerenciadorEquipamento>();
+            var comando = new ComandoAlterarGerenciadorEquipamento();
+
+            //Act
+            var resultado = executor.Executar(comando);
+
+            //Assert
+            resultado.Successo.Should().BeFalse("Resultados com falha devem ter o valor da propriedade Sucesso igual a falso");
+            resultado.Dado.Should().BeNull("Resultados com falha devem ter valor nulo na propridade Dado");
+            resultado.Mensagens.Should().NotBeEmpty("Resultados com falha devem ter alguma mensagem de notificação");
+        }
+
+        [Theory, AutoMoq]
         public void Equipamento_Invalido_GerarNotificacao(
             IFixture fixture,
             [Frozen] Mock<IRepositorioEquipamento> repositorioEquipamento,

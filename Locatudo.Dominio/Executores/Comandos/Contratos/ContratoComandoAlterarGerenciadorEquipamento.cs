@@ -8,8 +8,8 @@ namespace Locatudo.Dominio.Executores.Comandos.Contratos
         public ContratoComandoAlterarGerenciadorEquipamento(ComandoAlterarGerenciadorEquipamento comando)
         {
             Requires()
-                .IsNotNull(comando.Id, "IdEquipamento", "É necessário informar o IdEquipamento do equipamento para alterar seu gerenciador")
-                .IsNotNull(comando.IdDepartamento, "IdDepartamento", "É necessário informar o IdEquipamento do novo gerenciador do equipamento");
+                .AreNotEquals(comando.Id, default(Guid), "IdEquipamento", "É necessário informar o IdEquipamento do equipamento para alterar seu gerenciador")
+                .AreNotEquals(comando.IdDepartamento, default(Guid), "IdDepartamento", "É necessário informar o IdEquipamento do novo gerenciador do equipamento");
         }
     }
 }

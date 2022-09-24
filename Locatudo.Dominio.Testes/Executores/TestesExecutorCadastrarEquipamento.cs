@@ -27,5 +27,22 @@ namespace Locatudo.Dominio.Testes.Executores
                 .And.BeOfType<DadoRespostaComandoCadastrarEquipamento>("Resultados com sucesso devem ter a propriedade Dado de um tipo específico")
                 .Which.Should().Match<DadoRespostaComandoCadastrarEquipamento>(x => x.Nome.Equals(_comandoValido.Nome), "O nome do novo equipamento deve ser igual ao que foi passado no comando");
         }
+
+        [Theory, AutoMoq]
+        public void Comando_Invalido_GerarNotificacao(IFixture fixture)
+        {
+            ////Arrange
+            //Mock de executor e instância de comando
+            var executor = fixture.Create<ExecutorCadastrarEquipamento>();
+            var comando = new ComandoCadastrarEquipamento();
+
+            //Act
+            var resultado = executor.Executar(comando);
+
+            //Assert
+            resultado.Successo.Should().BeFalse("Resultados com falha devem ter o valor da propriedade Sucesso igual a falso");
+            resultado.Dado.Should().BeNull("Resultados com falha devem ter valor nulo na propridade Dado");
+            resultado.Mensagens.Should().NotBeEmpty("Resultados com falha devem ter alguma mensagem de notificação");
+        }
     }
 }

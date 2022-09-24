@@ -8,8 +8,8 @@ namespace Locatudo.Dominio.Executores.Comandos.Contratos
         public ContratoComandoReprovarLocacao(ComandoReprovarLocacao comando)
         {
             Requires()
-                .IsNotNull(comando.IdLocacao, "IdLocacao", "É necessário informar o IdEquipamento da locação que se pretende reprovar")
-                .IsNotNull(comando.IdAprovador, "IdAprovador", "É necessário informar o IdEquipamento do funcionário que está reprovando a locacação");
+                .AreNotEquals(comando.IdLocacao, default(Guid), "IdLocacao", "É necessário informar o IdEquipamento da locação que se pretende reprovar")
+                .AreNotEquals(comando.IdAprovador, default(Guid), "IdAprovador", "É necessário informar o IdEquipamento do funcionário que está reprovando a locacação");
         }
     }
 }
